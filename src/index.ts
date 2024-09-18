@@ -25,7 +25,7 @@ class School {
   }
 
   removeArea(areaName: string): void {
-    this._areas = this._areas.filter(area => area.name !== areaName);
+    this._areas = this._areas.filter((area: Area) => area.name !== areaName);
   }
 
   addLecturer(lecturer: Lecturer): void {
@@ -33,7 +33,7 @@ class School {
   }
 
   removeLecturer(lecturerName: string): void {
-    this._lecturers = this._lecturers.filter(lecturer => lecturer.name !== lecturerName);
+    this._lecturers = this._lecturers.filter((lecturer: Lecturer) => lecturer.name !== lecturerName);
   }
 }
 
@@ -58,7 +58,7 @@ class Area {
   }
 
   removeLevel(levelName: string): void {
-    this._levels = this._levels.filter(level => level.name !== levelName);
+    this._levels = this._levels.filter((level: Level) => level.name !== levelName);
   }
 }
 
@@ -89,7 +89,7 @@ class Level {
   }
 
   removeGroup(groupName: string): void {
-    this._groups = this._groups.filter(group => group.directionName !== groupName);
+    this._groups = this._groups.filter((group: Group) => group.directionName !== groupName);
   }
 }
 
@@ -130,7 +130,7 @@ class Group {
   }
 
   removeStudent(studentFullName: string): void {
-    this._students = this._students.filter(student => student.fullName !== studentFullName);
+    this._students = this._students.filter((student: Student) => student.fullName !== studentFullName);
   }
 
   showPerformance(): Student[] {
