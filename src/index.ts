@@ -1,117 +1,185 @@
-class School {
-  directions: any;
+interface Lecturer {
+  name: string;
+  surname: string;
+  position: string;
+  company: string;
+  experience: number;
+  courses: string[];
+  contacts: string[];
+}
 
-  addDirection(direction: string) {
-    this.directions.push(direction);
+class School {
+  _areas: Area[] = [];
+  _lecturers: Lecturer[] = [];
+
+  get areas(): Area[] {
+    return this._areas;
+  }
+
+  get lecturers(): Lecturer[] {
+    return this._lecturers;
+  }
+
+  addArea(area: Area): void {
+    this._areas.push(area);
+  }
+
+  removeArea(areaName: string): void {
+    this._areas = this._areas.filter(area => area.name !== areaName);
+  }
+
+  addLecturer(lecturer: Lecturer): void {
+    this._lecturers.push(lecturer);
+  }
+
+  removeLecturer(lecturerName: string): void {
+    this._lecturers = this._lecturers.filter(lecturer => lecturer.name !== lecturerName);
   }
 }
 
-class Direction {
-  levels: any;
-  private _name: string;
-  get name(): string {
-    return this._name;
-  }
+class Area {
+  _levels: Level[] = [];
+  _name: string;
 
   constructor(name: string) {
     this._name = name;
   }
 
-  addLevel(level: number) {
-    this.levels.push(level);
+  get name(): string {
+    return this._name;
+  }
+
+  get levels(): Level[] {
+    return this._levels;
+  }
+
+  addLevel(level: Level): void {
+    this._levels.push(level);
+  }
+
+  removeLevel(levelName: string): void {
+    this._levels = this._levels.filter(level => level.name !== levelName);
   }
 }
 
 class Level {
-  groups: any;
-  private _program: any;
-  private _name: string;
+  _groups: Group[] = [];
+  _name: string;
+  _description: string;
 
-  constructor(name: string, program: any) {
+  constructor(name: string, description: string) {
     this._name = name;
-    this._program = program;
+    this._description = description;
   }
 
   get name(): string {
     return this._name;
   }
 
-  get program(): any {
-    return this._program;
+  get description(): string {
+    return this._description;
   }
 
-  addGroup(group: string) {
-    this.groups.push(group);
+  get groups(): Group[] {
+    return this._groups;
+  }
+
+  addGroup(group: Group): void {
+    this._groups.push(group);
+  }
+
+  removeGroup(groupName: string): void {
+    this._groups = this._groups.filter(group => group.directionName !== groupName);
   }
 }
 
 class Group {
-  private _students: any;
+  _area: Area;
+  _status: string;
+  _students: Student[] = [];
   directionName: string;
   levelName: string;
-
-  get students(): any[] {
-    return this._students;
-  }
 
   constructor(directionName: string, levelName: string) {
     this.directionName = directionName;
     this.levelName = levelName;
   }
 
-  addStudent(student: string) {
+  get area(): Area {
+    return this._area;
+  }
+
+  set area(value: Area) {
+    this._area = value;
+  }
+
+  get status(): string {
+    return this._status;
+  }
+
+  set status(value: string) {
+    this._status = value;
+  }
+
+  get students(): Student[] {
+    return this._students;
+  }
+
+  addStudent(student: Student): void {
     this._students.push(student);
   }
 
-  showPerformance(): string[] {
-    const sortedStudents = this.students.toSorted((a, b) => b.getPerformanceRating() - a.getPerformanceRating());
+  removeStudent(studentFullName: string): void {
+    this._students = this._students.filter(student => student.fullName !== studentFullName);
+  }
 
-    return sortedStudents;
+  showPerformance(): Student[] {
+    return this._students.toSorted((a: Student, b: Student) => b.getPerformanceRating() - a.getPerformanceRating());
   }
 }
 
 class Student {
-  grades: any;
-  attendance: boolean[] = [];
-  firstName: string;
-  lastName: string;
-  birthYear: number;
+  _firstName: string;
+  _lastName: string;
+  _birthYear: number;
+  _grades: { [key: string]: number } = {}; // workName: mark
+  _visits: boolean[] = []; // lesson: present
 
   constructor(firstName: string, lastName: string, birthYear: number) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.birthYear = birthYear;
+    this._firstName = firstName;
+    this._lastName = lastName;
+    this._birthYear = birthYear;
   }
 
   get fullName(): string {
-    return `${this.lastName} ${this.firstName}`;
+    return `${this._lastName} ${this._firstName}`;
   }
 
   set fullName(value: string) {
-    [this.lastName, this.firstName] = value.split(' ');
+    [this._lastName, this._firstName] = value.split(' ');
   }
 
   get age(): number {
-    return new Date().getFullYear() - this.birthYear;
-  }
-
-  setGrade(subject: string, grade: number) {
-    this.grades[subject] = grade;
-  }
-
-  markAttendance(present: boolean) {
-    this.attendance.push(present);
+    return new Date().getFullYear() - this._birthYear;
   }
 
   getPerformanceRating(): number {
-    const gradeValues: number[] = Object.values(this.grades);
+    const gradeValues = Object.values(this._grades);
+    if (!gradeValues.length) return 0;
 
-    if (gradeValues.length === 0) return 0;
-
-    const averageGrade = gradeValues.reduce((sum, grade) => sum + grade, 0) / gradeValues.length;
-
-    const attendancePercentage = (this.attendance.filter(present => present).length / this.attendance.length) * 100;
+    const averageGrade: number =
+      gradeValues.reduce((sum: number, grade: number) => sum + grade, 0) / gradeValues.length;
+    const attendancePercentage: number =
+      (this._visits.filter((present: boolean) => present).length / this._visits.length) * 100;
 
     return (averageGrade + attendancePercentage) / 2;
+  }
+
+  setGrade(workName: string, mark: number): void {
+    this._grades[workName] = mark;
+  }
+
+  setVisit(isPresent: boolean): void {
+    this._visits.push(isPresent);
   }
 }
